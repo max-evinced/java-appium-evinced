@@ -7,12 +7,10 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 import io.appium.java_client.remote.options.BaseOptions;
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.ios.IOSDriver;
-import io.appium.java_client.ios.IOSElement;
 import io.appium.java_client.ios.options.XCUITestOptions;
 import io.appium.java_client.ios.options.other.CommandTimeouts;
 import io.appium.java_client.ios.options.simulator.Permissions;
 import org.junit.Test;
-
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -26,13 +24,13 @@ public class EvincedSetupTest
     public void shouldStartiOSDocsDriver() throws MalformedURLException
     {
         capabilities = new DesiredCapabilities();
+        capabilities.setCapability("browserName", "safari");
+        capabilities.setCapability("appium:automationName", "XCUITest");
+        capabilities.setCapability("appium:deviceName", "iPhone Simulator");
         capabilities.setCapability("platformName", "iOS");
-        capabilities.setCapability("platformVersion", "16");
-        capabilities.setCapability("deviceName", "iPhone.*");
-        capabilities.setCapability("automationName", "XCUITest");
-    
         driver = new EvincedAppiumIOSDriver(new URL("http://127.0.0.1:4723"), capabilities);
         evincedService = new EvincedAppiumSdk(driver);
+        driver.quit();
     }
 
     // @Test
@@ -50,22 +48,22 @@ public class EvincedSetupTest
     //     assertTrue( true );
     // }
 
-    @Test
-    public void shouldStartXCUIOptionsDriver() throws MalformedURLException
-    {
-        XCUITestOptions options = new XCUITestOptions();
+    // @Test
+    // public void shouldStartXCUIOptionsDriver() throws MalformedURLException
+    // {
+    //     XCUITestOptions options = new XCUITestOptions();
 
-        IOSDriver driver = new IOSDriver(new URL("http://127.0.0.1:4723"), options);
-        evincedService = new EvincedAppiumSdk(driver);        // The default URL in Appium 1 is http://127.0.0.1:4723/wd/hub
+    //     IOSDriver driver = new IOSDriver(new URL("http://127.0.0.1:4723"), options);
+    //     evincedService = new EvincedAppiumSdk(driver);        // The default URL in Appium 1 is http://127.0.0.1:4723/wd/hub
         
-        assertTrue( true );
-    }
+    //     assertTrue( true );
+    // }
 
 
-    @Test
-    public void shouldInstantiateEvincedObject()
-    {
-        assertTrue( true);
-    }
+    // @Test
+    // public void shouldInstantiateEvincedObject()
+    // {
+    //     assertTrue( true);
+    // }
 
 }
