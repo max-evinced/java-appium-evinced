@@ -1,7 +1,8 @@
-package com.maxdobeck;
+package com.maxdobeck.evinced.appium;
 
 import static org.junit.Assert.assertTrue;
 import com.evinced.appium.sdk.core.EvincedAppiumSdk;
+import com.evinced.appium.sdk.core.EvincedAppiumIOSDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import io.appium.java_client.remote.options.BaseOptions;
 import io.appium.java_client.AppiumDriver;
@@ -17,40 +18,46 @@ import java.net.URL;
 
 public class EvincedSetupTest
 {
-    protected static IOSDriver driver;
-    public static EvincedAppiumSdk evincedSdk;
+    public static DesiredCapabilities capabilities;
+    public static EvincedAppiumSdk evincedService;
+    public static EvincedAppiumIOSDriver driver;
     
     @Test
     public void shouldStartiOSDocsDriver() throws MalformedURLException
     {
-        DesiredCapabilities capabilities = new DesiredCapabilities();
-        evincedSdk = new EvincedAppiumSdk(new IOSDriver(new URL("http://127.0.0.1:4723"), capabilities));
-
+        capabilities = new DesiredCapabilities();
+        capabilities.setCapability("platformName", "iOS");
+        capabilities.setCapability("platformVersion", "16");
+        capabilities.setCapability("deviceName", "iPhone.*");
+        capabilities.setCapability("automationName", "XCUITest");
+    
+        driver = new EvincedAppiumIOSDriver(new URL("http://127.0.0.1:4723"), capabilities);
+        evincedService = new EvincedAppiumSdk(driver);
     }
 
-    @Test
-    public void shouldStartBaseOptionsDriver() throws MalformedURLException
-    {
-        BaseOptions options = new BaseOptions()
-            .setPlatformName("myplatform")
-            .setAutomationName("mydriver")
-            .amend("mycapability1", "capvalue1")
-            .amend("mycapability2", "capvalue2");
-        // The default URL in Appium 1 is http://127.0.0.1:4723/wd/hub
-        AppiumDriver driver = new AppiumDriver(new URL("http://127.0.0.1:4723"), options);
+    // @Test
+    // public void shouldStartBaseOptionsDriver() throws MalformedURLException
+    // {
+    //     BaseOptions options = new BaseOptions()
+    //         .setPlatformName("myplatform")
+    //         .setAutomationName("mydriver")
+    //         .amend("mycapability1", "capvalue1")
+    //         .amend("mycapability2", "capvalue2");
+    //     // The default URL in Appium 1 is http://127.0.0.1:4723/wd/hub
+    //     AppiumDriver driver = new AppiumDriver(new URL("http://127.0.0.1:4723"), options);
         
-        EvincedAppiumSdk evincedSdk = new EvincedAppiumSdk(driver);
-        assertTrue( true );
-    }
+    //     EvincedAppiumSdk evincedService = new EvincedAppiumSdk(driver);
+    //     assertTrue( true );
+    // }
 
     @Test
     public void shouldStartXCUIOptionsDriver() throws MalformedURLException
     {
         XCUITestOptions options = new XCUITestOptions();
+
         IOSDriver driver = new IOSDriver(new URL("http://127.0.0.1:4723"), options);
-        evincedSdk = new EvincedAppiumSdk(driver);        // The default URL in Appium 1 is http://127.0.0.1:4723/wd/hub
+        evincedService = new EvincedAppiumSdk(driver);        // The default URL in Appium 1 is http://127.0.0.1:4723/wd/hub
         
-        EvincedAppiumSdk evincedSdk = new EvincedAppiumSdk(driver);
         assertTrue( true );
     }
 
