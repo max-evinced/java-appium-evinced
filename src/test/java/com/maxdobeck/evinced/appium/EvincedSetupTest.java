@@ -3,6 +3,7 @@ package com.maxdobeck.evinced.appium;
 import static org.junit.Assert.assertTrue;
 import com.evinced.appium.sdk.core.EvincedAppiumSdk;
 import com.evinced.appium.sdk.core.EvincedAppiumIOSDriver;
+import com.evinced.appium.sdk.core.EvincedAppiumAndroidDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import io.appium.java_client.remote.options.BaseOptions;
 import io.appium.java_client.AppiumDriver;
@@ -33,6 +34,8 @@ public class EvincedSetupTest
         Thread.sleep(1500);
     }
 
+    @Before
+
     @After
     public void closeAppium() throws IOException
     {
@@ -52,6 +55,7 @@ public class EvincedSetupTest
             // TODO setup xcode tools for simulators
             driver = new EvincedAppiumIOSDriver(new URL("http://127.0.0.1:4723"), capabilities);
             evincedService = new EvincedAppiumSdk(driver);
+            evincedService.setupCredentials(System.getenv("SERVICE_ACCOUNT_ID"), System.getenv("API_KEY"));
             driver.quit();
         } catch (Exception ignore) {
             // ignore exceptions for now
