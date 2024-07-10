@@ -1,17 +1,19 @@
 package com.maxdobeck.evinced.appium;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import com.evinced.appium.sdk.core.EvincedAppiumSdk;
+import com.evinced.appium.sdk.core.models.InitOptions;
+import com.evinced.appium.sdk.core.models.Report;
 import com.evinced.appium.sdk.core.EvincedAppiumIOSDriver;
-import com.evinced.appium.sdk.core.EvincedAppiumAndroidDriver;
+// import com.evinced.appium.sdk.core.EvincedAppiumAndroidDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import io.appium.java_client.remote.options.BaseOptions;
 import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.android.AndroidDriver;
+import io.appium.java_client.android.options.UiAutomator2Options;
 import io.appium.java_client.ios.IOSDriver;
 import io.appium.java_client.ios.options.XCUITestOptions;
-import io.appium.java_client.ios.options.other.CommandTimeouts;
-import io.appium.java_client.ios.options.simulator.Permissions;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,23 +30,18 @@ public class EvincedSetupTest
     public static Process appium;
 
     @Before
-    public void startAppium() throws IOException, InterruptedException
-    {
+    public void startAppium() throws IOException, InterruptedException {
         appium = Runtime.getRuntime().exec("appium");
         Thread.sleep(1500);
     }
 
-    @Before
-
     @After
-    public void closeAppium() throws IOException
-    {
+    public void closeAppium() throws IOException {
         appium.destroy();
     }
     
     @Test
-    public void shouldStartiOSDocsDriver() throws MalformedURLException
-    {
+    public void shouldStartiOSDocsDriver() throws MalformedURLException {
         capabilities = new DesiredCapabilities();
         capabilities.setCapability("browserName", "safari");
         capabilities.setCapability("appium:automationName", "XCUITest");
@@ -63,8 +60,7 @@ public class EvincedSetupTest
     }
 
     @Test
-    public void shouldStartBaseOptionsDriver() throws MalformedURLException
-    {
+    public void shouldStartBaseOptionsDriver() throws MalformedURLException {
         BaseOptions options = new BaseOptions()
             .setPlatformName("myplatform")
             .setAutomationName("mydriver")
@@ -73,8 +69,8 @@ public class EvincedSetupTest
         
         try {
             AppiumDriver driver = new AppiumDriver(new URL("http://127.0.0.1:4723"), options);
-    
             EvincedAppiumSdk evincedService = new EvincedAppiumSdk(driver);
+            evincedService.setupCredentials(System.getenv("SERVICE_ACCOUNT_ID"), System.getenv("API_KEY"));
         } catch (Exception ignore) {
             //ignore exception
         }
@@ -82,25 +78,40 @@ public class EvincedSetupTest
     }
 
     @Test
-    public void shouldStartXCUIOptionsDriver() throws MalformedURLException
-    {
+    public void shouldStartXCUIOptionsDriver() throws MalformedURLException {
         XCUITestOptions options = new XCUITestOptions();
 
         try {
             IOSDriver driver = new IOSDriver(new URL("http://127.0.0.1:4723"), options);
             evincedService = new EvincedAppiumSdk(driver);
+            evincedService.setupCredentials(System.getenv("SERVICE_ACCOUNT_ID"), System.getenv("API_KEY"));
         } catch (Exception ignore) {
             // ignore
         }
-    
         assertTrue( true );
     }
 
 
-    // @Test
-    // public void shouldInstantiateEvincedObject()
-    // {
-    //     assertTrue( true);
-    // }
+    @Test
+    // https://github.com/appium/java-client?tab=readme-ov-file#usage-examples
+    public void worksOnAndroid() throws MalformedURLException {
+        UiAutomator2Options options = new UiAutomator2Options()
+        .setAutomationName("UIAutomator2")
+        .setDeviceName("emulator-5554")
+        .setAppPackage("com.google.android.apps.maps")
+        .setAppActivity("com.google.android.maps.MapsActivity")
+        .setPlatformName("android")
+        .setPlatformVersion("14")
+        .setAutoGrantPermissions(true);
+
+        final InitOptions initOptions = new InitOptions(InitOptions.ScreenshotOption.Base64);         
+        AndroidDriver driver = new AndroidDriver(new URL("http://127.0.0.1:4723"), options);
+        evincedService = new EvincedAppiumSdk(driver, initOptions);
+        evincedService.setupCredentials(System.getenv("SERVICE_ACCOUNT_ID"), System.getenv("API_KEY"));
+        evincedService.analyze();
+        Report report = evincedService.report();
+        assertEquals(report.hasIssues(), false);
+        driver.quit();
+    }
 
 }
