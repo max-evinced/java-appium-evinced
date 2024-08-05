@@ -40,13 +40,13 @@
     <dependency>
         <groupId>io.appium</groupId>
         <artifactId>java-client</artifactId>
-        <version>9.2.3</version>
+        <version>9.1.0</version>
     </dependency>
 
     <dependency>
       <groupId>com.evinced</groupId>
       <artifactId>appium-sdk</artifactId>
-      <version>1.20.0_java_client_8</version>
+      <version>1.22.0_java_client_8</version>
       <scope>test</scope>
     </dependency>
 
