@@ -3,8 +3,12 @@ package com.maxdobeck.evinced.appium;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import com.evinced.appium.sdk.core.EvincedAppiumSdk;
+import com.evinced.appium.sdk.core.models.EvincedConfig;
 import com.evinced.appium.sdk.core.models.InitOptions;
+import com.evinced.appium.sdk.core.models.IssueFilter;
+import com.evinced.appium.sdk.core.models.IssueType;
 import com.evinced.appium.sdk.core.models.Report;
+import com.evinced.appium.sdk.core.models.Severity;
 import com.evinced.appium.sdk.core.EvincedAppiumIOSDriver;
 // import com.evinced.appium.sdk.core.EvincedAppiumAndroidDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
@@ -22,7 +26,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-public class EvincedSetupTest
+public class IssueFilterTest
 {
     public static DesiredCapabilities capabilities;
     public static EvincedAppiumSdk evincedService;
@@ -41,18 +45,27 @@ public class EvincedSetupTest
     }
     
     @Test
-    public void shouldStartiOSDocsDriver() throws MalformedURLException {
+    public void globalFilter() throws MalformedURLException {
         capabilities = new DesiredCapabilities();
         capabilities.setCapability("browserName", "safari");
         capabilities.setCapability("appium:automationName", "XCUITest");
         capabilities.setCapability("udid", "auto");
         capabilities.setCapability("appium:deviceName", "iPhone Simulator");
         capabilities.setCapability("platformName", "iOS");
+        
         try {
-            // TODO setup xcode tools for simulators
+            // Setup EvincedAppium IOS Driver
             driver = new EvincedAppiumIOSDriver(new URL("http://127.0.0.1:4723"), capabilities);
-            evincedService = new EvincedAppiumSdk(driver);
+            // Issue Filter(s)
+            final IssueFilter globalFilter = new IssueFilter(driver).severity(Severity.Critical);
+            // Add Filter to config
+            final EvincedConfig evincedConfig = new EvincedConfig().includeFilters(globalFilter);
+            // Launch Evinced SDK with Global Filtering applied to all 
+            // evinced.analyze() and evinced.report() calls
+            evincedService = new EvincedAppiumSdk(driver, new InitOptions(evincedConfig));
             evincedService.setupCredentials(System.getenv("SERVICE_ACCOUNT_ID"), System.getenv("API_KEY"));
+
+
             driver.quit();
         } catch (Exception ignore) {
             System.err.println(ignore);
