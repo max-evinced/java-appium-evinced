@@ -64,8 +64,6 @@ public class IssueFilterTest
             // evinced.analyze() and evinced.report() calls
             evincedService = new EvincedAppiumSdk(driver, new InitOptions(evincedConfig));
             evincedService.setupCredentials(System.getenv("SERVICE_ACCOUNT_ID"), System.getenv("API_KEY"));
-
-
             driver.quit();
         } catch (Exception ignore) {
             System.err.println(ignore);
